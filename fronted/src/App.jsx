@@ -1,122 +1,110 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { Suspense, lazy } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
 
-function App() {
-  const [count, setCount] = useState(0)
+import WebsiteLayout from './layouts/WebsiteLayout.jsx'
+import PortalLayout from './layouts/PortalLayout.jsx'
+import ProtectedRoute from './components/common/ProtectedRoute.jsx'
+import Loader from './components/common/Loader.jsx'
 
+// ---------------------------------------------------------------------------
+// Public website pages (lazy-loaded so the admin portal bundle stays separate)
+// ---------------------------------------------------------------------------
+const Home = lazy(() => import('./pages/website/Home.jsx'))
+const Games = lazy(() => import('./pages/website/Games.jsx'))
+const Pricing = lazy(() => import('./pages/website/Pricing.jsx'))
+const BookConsole = lazy(() => import('./pages/website/BookConsole.jsx'))
+const Tournaments = lazy(() => import('./pages/website/Tournaments.jsx'))
+const Leaderboard = lazy(() => import('./pages/website/Leaderboard.jsx'))
+const About = lazy(() => import('./pages/website/About.jsx'))
+const Contact = lazy(() => import('./pages/website/Contact.jsx'))
+const Login = lazy(() => import('./pages/website/Login.jsx'))
+const Register = lazy(() => import('./pages/website/Register.jsx'))
+
+// ---------------------------------------------------------------------------
+// Admin portal pages
+// ---------------------------------------------------------------------------
+const Dashboard = lazy(() => import('./pages/portal/Dashboard.jsx'))
+const WalkIns = lazy(() => import('./pages/portal/WalkIns.jsx'))
+const Customers = lazy(() => import('./pages/portal/Customers.jsx'))
+const Consoles = lazy(() => import('./pages/portal/Consoles.jsx'))
+const PortalGames = lazy(() => import('./pages/portal/Games.jsx'))
+const GamingSessions = lazy(() => import('./pages/portal/GamingSessions.jsx'))
+const Inventory = lazy(() => import('./pages/portal/Inventory.jsx'))
+const Sales = lazy(() => import('./pages/portal/Sales.jsx'))
+const Payments = lazy(() => import('./pages/portal/Payments.jsx'))
+const Expenses = lazy(() => import('./pages/portal/Expenses.jsx'))
+const Reports = lazy(() => import('./pages/portal/Reports.jsx'))
+const Users = lazy(() => import('./pages/portal/Users.jsx'))
+const Settings = lazy(() => import('./pages/portal/Settings.jsx'))
+const AuditLogs = lazy(() => import('./pages/portal/AuditLogs.jsx'))
+const Notifications = lazy(() => import('./pages/portal/Notifications.jsx'))
+const Betting = lazy(() => import('./pages/portal/Betting.jsx'))
+const Profile = lazy(() => import('./pages/portal/Profile.jsx'))
+const NotFound = lazy(() => import('./pages/portal/NotFound.jsx'))
+
+function PageFallback() {
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+    <div className="ll-page-fallback">
+      <Loader label="Loading page..." />
+    </div>
   )
 }
 
-export default App
+export default function App() {
+  return (
+    <Suspense fallback={<PageFallback />}>
+      <Routes>
+        {/* --------------------------------------------------------------- */}
+        {/* Public marketing website                                       */}
+        {/* --------------------------------------------------------------- */}
+        <Route element={<WebsiteLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/games" element={<Games />} />
+          <Route path="/pricing" element={<Pricing />} />
+          <Route path="/book" element={<BookConsole />} />
+          <Route path="/tournaments" element={<Tournaments />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Route>
+
+        {/* --------------------------------------------------------------- */}
+        {/* Admin portal (protected)                                       */}
+        {/* --------------------------------------------------------------- */}
+        <Route
+          path="/portal"
+          element={
+            <ProtectedRoute>
+              <PortalLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="walk-ins" element={<WalkIns />} />
+          <Route path="customers" element={<Customers />} />
+          <Route path="consoles" element={<Consoles />} />
+          <Route path="games" element={<PortalGames />} />
+          <Route path="gaming-sessions" element={<GamingSessions />} />
+          <Route path="inventory" element={<Inventory />} />
+          <Route path="sales" element={<Sales />} />
+          <Route path="payments" element={<Payments />} />
+          <Route path="expenses" element={<Expenses />} />
+          <Route path="reports" element={<Reports />} />
+          <Route path="users" element={<Users />} />
+          <Route path="settings" element={<Settings />} />
+          <Route path="audit-logs" element={<AuditLogs />} />
+          <Route path="notifications" element={<Notifications />} />
+          <Route path="betting" element={<Betting />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="*" element={<NotFound />} />
+        </Route>
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Suspense>
+  )
+}
