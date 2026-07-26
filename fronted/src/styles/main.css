@@ -1,0 +1,550 @@
+/* =============================================================================
+   src/styles/main.css
+   LevelUp Lounge — global design system.
+
+   Design language: the accent palette borrows directly from the thing this
+   product manages — console status LEDs. Each console state in the portal
+   (available / occupied / maintenance / reserved / offline) maps to one
+   named color used consistently everywhere else too (badges, charts,
+   buttons), so the palette is never arbitrary — it's the same vocabulary
+   staff already read off the lounge floor.
+
+   Type: Space Grotesk (display, technical/arcade-marquee character) +
+   Inter (body, high legibility for dense tables) + JetBrains Mono (stats,
+   receipts, timers — anything numeric that benefits from tabular figures).
+   ============================================================================= */
+
+/* ---------------------------------------------------------------------------
+   1. Design tokens
+   --------------------------------------------------------------------------- */
+:root {
+  /* Brand / status palette — the "console LED" system */
+  --color-violet: #7C5CFC;   /* occupied / primary brand */
+  --color-violet-dim: #5B3FD9;
+  --color-mint: #00E5A0;     /* available / success */
+  --color-amber: #FFB020;    /* maintenance / warning */
+  --color-cyan: #22D3EE;     /* reserved / info */
+  --color-slate: #6B7280;    /* offline / neutral */
+  --color-crimson: #FF5C7A;  /* danger / errors */
+
+  /* Fonts */
+  --font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
+  --font-body: 'Inter', 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+
+  /* Type scale */
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.9375rem;
+  --text-md: 1.0625rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.625rem;
+  --text-2xl: 2.125rem;
+  --text-3xl: 2.75rem;
+
+  /* Spacing (4px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Radii & elevation */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 999px;
+  --shadow-sm: 0 1px 2px rgba(10, 12, 20, 0.16);
+  --shadow-md: 0 8px 24px rgba(10, 12, 20, 0.28);
+  --shadow-lg: 0 20px 48px rgba(10, 12, 20, 0.36);
+
+  /* Layout */
+  --sidebar-width: 264px;
+  --sidebar-width-collapsed: 76px;
+  --topbar-height: 68px;
+  --container-max: 1280px;
+
+  /* Motion */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast: 120ms;
+  --duration-base: 220ms;
+}
+
+/* ---------------------------------------------------------------------------
+   2. Theme: dark (default)
+   --------------------------------------------------------------------------- */
+:root,
+[data-theme='dark'] {
+  --color-bg: #0E1120;
+  --color-bg-elevated: #141830;
+  --color-surface: #171B2E;
+  --color-surface-hover: #1E2338;
+  --color-border: #262C46;
+  --color-border-strong: #343B5C;
+
+  --color-text: #EDEFF7;
+  --color-text-muted: #9AA0BE;
+  --color-text-faint: #676E93;
+
+  --color-primary: var(--color-violet);
+  --color-primary-hover: #8E73FF;
+  --color-success: var(--color-mint);
+  --color-warning: var(--color-amber);
+  --color-info: var(--color-cyan);
+  --color-danger: var(--color-crimson);
+
+  color-scheme: dark;
+}
+
+/* ---------------------------------------------------------------------------
+   3. Theme: light
+   --------------------------------------------------------------------------- */
+[data-theme='light'] {
+  --color-bg: #F5F6FB;
+  --color-bg-elevated: #FFFFFF;
+  --color-surface: #FFFFFF;
+  --color-surface-hover: #F0F1FA;
+  --color-border: #E3E5F2;
+  --color-border-strong: #CBCEE6;
+
+  --color-text: #171A2C;
+  --color-text-muted: #5C6082;
+  --color-text-faint: #8B8FB0;
+
+  --color-primary: var(--color-violet-dim);
+  --color-primary-hover: var(--color-violet);
+  --color-success: #0FAE7C;
+  --color-warning: #C97F0B;
+  --color-info: #0891B2;
+  --color-danger: #E23B57;
+
+  color-scheme: light;
+}
+
+/* ---------------------------------------------------------------------------
+   4. Reset & base
+   --------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color var(--duration-base) var(--ease-standard), color var(--duration-base) var(--ease-standard);
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+/* Visible keyboard focus everywhere — never suppressed */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   5. Typography
+   --------------------------------------------------------------------------- */
+h1, h2, h3, h4, .ll-display {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  color: var(--color-text);
+}
+
+h1 { font-size: var(--text-3xl); }
+h2 { font-size: var(--text-2xl); }
+h3 { font-size: var(--text-xl); }
+h4 { font-size: var(--text-lg); }
+
+p { color: var(--color-text-muted); }
+
+.ll-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.ll-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-text-faint);
+}
+
+.ll-text-muted { color: var(--color-text-muted); }
+.ll-text-faint { color: var(--color-text-faint); }
+
+/* ---------------------------------------------------------------------------
+   6. Layout primitives
+   --------------------------------------------------------------------------- */
+.ll-container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--space-6);
+}
+
+.ll-page-fallback {
+  min-height: 60vh;
+  display: grid;
+  place-items: center;
+}
+
+.ll-grid {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.ll-grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.ll-grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.ll-grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+@media (max-width: 1024px) {
+  .ll-grid-cols-4 { grid-template-columns: repeat(2, 1fr); }
+  .ll-grid-cols-3 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .ll-grid-cols-4,
+  .ll-grid-cols-3,
+  .ll-grid-cols-2 { grid-template-columns: 1fr; }
+  .ll-container { padding-inline: var(--space-4); }
+}
+
+.ll-flex { display: flex; align-items: center; }
+.ll-flex-between { display: flex; align-items: center; justify-content: space-between; }
+.ll-flex-col { display: flex; flex-direction: column; }
+.ll-gap-2 { gap: var(--space-2); }
+.ll-gap-3 { gap: var(--space-3); }
+.ll-gap-4 { gap: var(--space-4); }
+
+/* ---------------------------------------------------------------------------
+   7. Cards
+   --------------------------------------------------------------------------- */
+.ll-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+}
+
+.ll-card--stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.ll-card--stat .ll-stat-value {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.ll-card--stat .ll-stat-label {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.ll-card--stat .ll-stat-delta {
+  font-size: var(--text-xs);
+  font-family: var(--font-mono);
+}
+
+.ll-stat-delta--up { color: var(--color-success); }
+.ll-stat-delta--down { color: var(--color-danger); }
+
+/* ---------------------------------------------------------------------------
+   8. Buttons
+   --------------------------------------------------------------------------- */
+.ll-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  border: 1px solid transparent;
+  transition: background-color var(--duration-fast) var(--ease-standard), transform var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard);
+  white-space: nowrap;
+}
+
+.ll-btn:active { transform: translateY(1px); }
+.ll-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.ll-btn--primary {
+  background: var(--color-primary);
+  color: #0E1120;
+}
+.ll-btn--primary:hover:not(:disabled) { background: var(--color-primary-hover); }
+
+.ll-btn--secondary {
+  background: transparent;
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
+}
+.ll-btn--secondary:hover:not(:disabled) { background: var(--color-surface-hover); }
+
+.ll-btn--danger {
+  background: var(--color-danger);
+  color: #12040A;
+}
+.ll-btn--danger:hover:not(:disabled) { filter: brightness(1.08); }
+
+.ll-btn--ghost {
+  background: transparent;
+  color: var(--color-text-muted);
+}
+.ll-btn--ghost:hover:not(:disabled) { color: var(--color-text); background: var(--color-surface-hover); }
+
+.ll-btn--sm { padding: 6px 12px; font-size: var(--text-xs); }
+.ll-btn--icon { padding: 8px; border-radius: var(--radius-sm); }
+
+/* ---------------------------------------------------------------------------
+   9. Badges — console / session status vocabulary, used everywhere
+   --------------------------------------------------------------------------- */
+.ll-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ll-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.ll-badge--available { color: var(--color-success); background: color-mix(in srgb, var(--color-success) 16%, transparent); }
+.ll-badge--occupied  { color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 16%, transparent); }
+.ll-badge--maintenance { color: var(--color-warning); background: color-mix(in srgb, var(--color-warning) 16%, transparent); }
+.ll-badge--reserved { color: var(--color-info); background: color-mix(in srgb, var(--color-info) 16%, transparent); }
+.ll-badge--offline { color: var(--color-text-faint); background: color-mix(in srgb, var(--color-text-faint) 16%, transparent); }
+.ll-badge--danger { color: var(--color-danger); background: color-mix(in srgb, var(--color-danger) 16%, transparent); }
+
+/* ---------------------------------------------------------------------------
+   10. Forms
+   --------------------------------------------------------------------------- */
+.ll-field { display: flex; flex-direction: column; gap: var(--space-2); }
+
+.ll-label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ll-input,
+.ll-select,
+.ll-textarea {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  font-size: var(--text-base);
+  color: var(--color-text);
+  transition: border-color var(--duration-fast) var(--ease-standard);
+}
+
+.ll-input:focus,
+.ll-select:focus,
+.ll-textarea:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.ll-input::placeholder,
+.ll-textarea::placeholder {
+  color: var(--color-text-faint);
+}
+
+/* ---------------------------------------------------------------------------
+   11. Tables
+   --------------------------------------------------------------------------- */
+.ll-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.ll-table th {
+  text-align: left;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-faint);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg-elevated);
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.ll-table td {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--text-sm);
+}
+
+.ll-table tr:last-child td { border-bottom: none; }
+.ll-table tbody tr { transition: background-color var(--duration-fast) var(--ease-standard); }
+.ll-table tbody tr:hover { background: var(--color-surface-hover); }
+
+/* ---------------------------------------------------------------------------
+   12. Modal / overlay
+   --------------------------------------------------------------------------- */
+.ll-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 7, 15, 0.6);
+  backdrop-filter: blur(2px);
+  display: grid;
+  place-items: center;
+  z-index: 100;
+  padding: var(--space-4);
+}
+
+.ll-modal {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: var(--space-6);
+}
+
+/* ---------------------------------------------------------------------------
+   13. Loader
+   --------------------------------------------------------------------------- */
+.ll-loader {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.ll-spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border-strong);
+  border-top-color: var(--color-primary);
+  animation: ll-spin 700ms linear infinite;
+}
+
+@keyframes ll-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---------------------------------------------------------------------------
+   14. Scrollbars (dark-mode friendly)
+   --------------------------------------------------------------------------- */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: var(--radius-full);
+  border: 2px solid var(--color-bg);
+}
+
+/* ---------------------------------------------------------------------------
+   15. Utilities
+   --------------------------------------------------------------------------- */
+.ll-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ll-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
